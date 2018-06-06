@@ -1484,7 +1484,7 @@ def _update_docker_images(
             ['docker tag {}{} {}'.format(registry, x, x) for x in images])
     coordcmd.append(
         'docker images --filter dangling=true -q --no-trunc | '
-        'xargs --no-run-if-empty docker rmi')
+        'xargs --no-run-if-empty docker rmi -f')
     if force_ssh:
         _update_docker_images_over_ssh(batch_client, config, pool, coordcmd)
         return
