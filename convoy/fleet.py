@@ -1476,12 +1476,14 @@ def _update_docker_images(
     # 1. log in again in case of cred expiry
     # 2. pull images with respect to registry
     # 3. tag images that are in a private registry
+    # 4. Remove all running containers
     # 4. prune docker images with no tag
     taskenv, coordcmd = batch.generate_docker_login_settings(config, force_ssh)
     coordcmd.extend(['docker pull {}{}'.format(registry, x) for x in images])
     if registry != '':
         coordcmd.extend(
             ['docker tag {}{} {}'.format(registry, x, x) for x in images])
+    coordcmd.append('sudo docker rm -f $(sudo docker ps -a -q)')
     coordcmd.append(
         'docker images --filter dangling=true -q --no-trunc | '
         'xargs --no-run-if-empty docker rmi -f')
